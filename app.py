@@ -51,142 +51,211 @@ import io
 import base64
 
 # Set page config
-st.set_page_config(page_title="FLUX AI Image Creator", page_icon="🎨", layout="wide")
+st.set_page_config(page_title="Text-2-Image Generator", page_icon="🎨", layout="wide")
 
-# Modern and premium CSS enhancements
+
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
     :root {
-        --primary-bg: #121212;
-        --secondary-bg: #1E1E1E;
-        --accent-1: #3B82F6;
-        --accent-2: #EF4444;
+        --primary-bg: #0A0A0A;
+        --secondary-bg: #1A1A1A;
+        --accent-1: #6E56CF;
+        --accent-2: #C24BF6;
         --text-color: #E0E0E0;
-        --highlight: #F59E0B;
+        --highlight: #9F7AEA;
+        --muted: #6B7280;
+        --divider: #2D2D2D;
     }
 
     html, body, [class*="css"] {
-        font-family: 'Roboto', sans-serif;
+        font-family: 'Inter', sans-serif;
         color: var(--text-color);
+        background-color: var(--primary-bg);
     }
 
     .stApp {
-        background-color: var(--primary-bg);
-        display: flex;
-        flex-direction: column;
-        padding: 20px;
+        background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg));
     }
 
     .main .block-container {
         padding-top: 2rem;
         padding-bottom: 2rem;
+        max-width: 800px;
+        margin: 0 auto;
     }
 
     /* Sleek Header */
     h1 {
         color: var(--text-color);
-        font-weight: 700;
+        font-weight: 600;
         text-align: center;
-        padding: 20px;
-        background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-        border-radius: 12px;
+        padding: 40px 0;
+        font-size: 48px;
+        letter-spacing: -0.015em;
         margin-bottom: 2rem;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-        transition: all 0.4s ease;
-        text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.5);
-    }
-
-    h1:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+        background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 8s ease infinite;
     }
 
     /* Input and Button Styles */
     .stTextInput > div > div > input {
         background-color: var(--secondary-bg);
         color: var(--text-color);
-        border: 1px solid var(--accent-1);
+        border: 1px solid var(--muted);
         border-radius: 8px;
-        padding: 10px;
+        padding: 12px 16px;
+        font-size: 16px;
         transition: all 0.3s ease;
     }
 
     .stTextInput > div > div > input:focus {
-        border-color: var(--highlight);
-        box-shadow: 0 0 10px var(--highlight);
+        border-color: var(--accent-1);
+        box-shadow: 0 0 0 2px rgba(110, 86, 207, 0.25);
     }
 
     .stButton > button {
-        background: var(--accent-1);
-        color: var(--text-color);
-        border-radius: 20px;
-        padding: 10px 24px;
-        font-weight: 600;
+        background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+        color: white;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-weight: 500;
         border: none;
-        transition: background 0.3s ease, transform 0.3s ease;
+        transition: all 0.3s ease;
         text-transform: uppercase;
         letter-spacing: 1px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        font-size: 14px;
     }
 
     .stButton > button:hover {
-        background: var(--accent-2);
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        opacity: 0.9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(159, 122, 234, 0.3);
+    }
+
+    /* Radio Button Styles */
+    .stRadio > div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .stRadio > div > label {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        background-color: var(--secondary-bg);
+        border: 1px solid var(--muted);
+        border-radius: 8px;
+        padding: 10px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .stRadio > div > label:hover {
+        border-color: var(--accent-1);
+    }
+
+    .stRadio > div > label > div {
+        font-size: 16px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+
+    /* Slider Styles */
+    .stSlider > div > div > div {
+        background-color: var(--accent-1);
+    }
+
+    .stSlider > div > div > div > div {
+        background-color: var(--accent-2);
+        border: 2px solid var(--accent-1);
     }
 
     /* Image Box */
     .image-box {
-        background: rgba(30, 30, 30, 0.85);
-        border-radius: 15px;
-        padding: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        margin-top: 20px;
+        background: rgba(26, 26, 26, 0.6);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 30px;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .image-box:hover {
-        transform: scale(1.03);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+        transform: scale(1.02);
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
     }
 
     /* Sleek Footer */
     .footer {
         text-align: center;
-        padding: 15px 0;
-        background: var(--secondary-bg);
-        border-top: 1px solid var(--accent-1);
-        color: var(--text-color);
+        padding: 20px 0;
+        color: var(--muted);
         margin-top: 3rem;
-        box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.2);
-        border-radius: 8px;
-        animation: fadeInUp 0.8s ease-out;
-    }
-
-    .footer p {
-        margin: 0;
         font-size: 14px;
         font-weight: 400;
-        letter-spacing: 0.5px;
-    }
-
-    .footer p:hover {
-        color: var(--highlight);
-        transition: color 0.3s ease;
     }
 
     /* Animations */
-    @keyframes fadeInUp {
-        0% { opacity: 0; transform: translateY(20px); }
-        100% { opacity: 1; transform: translateY(0); }
+    @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .stApp {
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    /* New styles for enhanced structure */
+    .section {
+        background: var(--secondary-bg);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid var(--divider);
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--accent-1);
+    }
+
+    .divider {
+        height: 1px;
+        background-color: var(--divider);
+        margin: 20px 0;
+    }
+
+    .label {
+        font-size: 14px;
+        color: var(--muted);
+        margin-bottom: 5px;
+    }
+
+    .value {
+        font-size: 16px;
+        color: var(--text-color);
+        background: rgba(110, 86, 207, 0.1);
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-bottom: 15px;
     }
 </style>
-
-
-
-
 """, unsafe_allow_html=True)
 
 # Helper function for API call
@@ -203,25 +272,39 @@ def query(payload, model_choice):
     return response.content
 
 # Main content
-st.markdown("<h1>FLUX AI Image Creator</h1>", unsafe_allow_html=True)
-
-# Centered content layout
-st.markdown("<div style='display: flex; justify-content: center; align-items: center; flex-direction: column;'>", unsafe_allow_html=True)
+st.markdown("<h1>Text-2-Image Generator</h1>", unsafe_allow_html=True)
 
 # Image generation settings
-model_choice = st.selectbox(
+st.markdown('<div class="section">', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Model Selection</div>', unsafe_allow_html=True)
+model_choice = st.radio(
     "Choose AI Model",
     ("FLUX RealismLora", "FLUX.1-schnell"),
     index=0
 )
+st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-prompt = st.text_input("Enter your prompt:", "A futuristic cityscape with flying cars")
 
-guidance_scale = st.slider("Creativity Level", min_value=1.0, max_value=10.0, value=7.5, step=0.1)
-num_inference_steps = st.slider("Image Quality", min_value=20, max_value=100, value=50, step=5)
+st.markdown('<div class="section">', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Image Prompt</div>', unsafe_allow_html=True)
+prompt = st.text_input("Enter your prompt", value="A futuristic cityscape with flying cars")
 
-if st.button("🎨 Generate Image"):
-    with st.spinner("🚀 Creating your masterpiece..."):
+
+st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+
+st.markdown('<div class="section">', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Generation Parameters</div>', unsafe_allow_html=True)
+col1, col2 = st.columns(2)
+with col1:
+    guidance_scale = st.slider("Creativity Level", min_value=1.0, max_value=10.0, value=7.5, step=0.1)
+with col2:
+    num_inference_steps = st.slider("Image Quality", min_value=20, max_value=100, value=50, step=5)
+st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+
+if st.button("Generate Image"):
+    with st.spinner("Creating your masterpiece..."):
         try:
             image_bytes = query({
                 "inputs": prompt,
@@ -233,7 +316,23 @@ if st.button("🎨 Generate Image"):
             }, model_choice)
             
             image = Image.open(io.BytesIO(image_bytes))
-            st.image(image, caption="Generated Image", use_column_width="auto")
+            st.markdown('<div class="section">', unsafe_allow_html=True)
+            st.markdown('<div class="section-title">Generated Image</div>', unsafe_allow_html=True)
+            st.markdown('<div class="image-box">', unsafe_allow_html=True)
+            st.image(image, caption="", use_column_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            # Display generation parameters
+            st.markdown('<div class="label">Prompt</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="value">{prompt}</div>', unsafe_allow_html=True)
+            st.markdown('<div class="label">Model</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="value">{model_choice}</div>', unsafe_allow_html=True)
+            st.markdown('<div class="label">Creativity Level</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="value">{guidance_scale}</div>', unsafe_allow_html=True)
+            st.markdown('<div class="label">Image Quality</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="value">{num_inference_steps}</div>', unsafe_allow_html=True)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
 
             buffered = io.BytesIO()
             image.save(buffered, format="PNG")
@@ -249,8 +348,5 @@ if st.button("🎨 Generate Image"):
         except Exception as e:
             st.error(f"An error occurred: {e}")
 
-# Closing centered content layout
-st.markdown("</div>", unsafe_allow_html=True)
-
 # Footer
-st.markdown("<div class='footer'>© 2024 FLUX AI. All Rights Reserved.</div>", unsafe_allow_html=True)
+st.markdown("<div class='footer'>© 2024. All Rights Reserved.</div>", unsafe_allow_html=True)
