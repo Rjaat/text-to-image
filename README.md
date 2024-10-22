@@ -13,6 +13,11 @@ This AI based Text-to-Image Generator is a powerful and user-friendly web applic
 
 - Downloadable high-resolution output
 
+## Hosted Version
+
+You can also access this application directly without needing to install anything. It’s hosted on Streamlit Cloud and can be accessed through the following link:
+[Generate Images on Streamlit Cloud](https://text-to-image-ie9gf5xp6mthpjqdyhnts9.streamlit.app/)
+
 ## Installation
 
 1. Clone this repository:
